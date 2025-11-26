@@ -10,7 +10,7 @@
 
 
 AutoRecon is a lightweight automated reconnaissance tool written in Python.  
-It combines multiple industry-standard recon tools into a single, easy-to-use workflow.  
+It combines multiple industry-standard recon tools into a single, easy to use workflow.  
 This toolkit is designed for CTFs, penetration testing labs, and bug bounty recon.
 
 ---
@@ -26,7 +26,7 @@ This toolkit is designed for CTFs, penetration testing labs, and bug bounty reco
 - Historical URLs (waybackurls)
 - Colored CLI output
 - Generates a full recon summary report
-- Plug-and-play design—no frameworks needed
+- Plug-and-play design no frameworks needed
 
 
 ## Installation
@@ -241,3 +241,4 @@ pip install -r requirements.txt
 
 
                       
+
