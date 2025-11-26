@@ -1,5 +1,14 @@
 # AutoRecon Toolkit
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Language-Python%203-blue?style=for-the-badge">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Status-Stable-success?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Platform-Linux%20%7C%20Kali%20%7C%20Windows-lightgrey?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Recon-Automated-red?style=for-the-badge">
+</p>
+
+
 AutoRecon is a lightweight automated reconnaissance tool written in Python.  
 It combines multiple industry-standard recon tools into a single, easy-to-use workflow.  
 This toolkit is designed for CTFs, penetration testing labs, and bug bounty recon.
@@ -229,5 +238,6 @@ Users can install everything with a single command:
 
 ```bash
 pip install -r requirements.txt
+
 
                       
