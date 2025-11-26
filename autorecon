@@ -1,0 +1,172 @@
+#!/usr/bin/env python3
+import subprocess
+import sys
+
+# ---------------- COLORS ----------------
+
+class Colors:
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    BLUE = '\033[94m'
+    CYAN = '\033[96m'
+    WHITE = '\033[97m'
+    BOLD = '\033[1m'
+    END = '\033[0m'
+
+# ---------------- BANNER ----------------
+
+def colored_auto_recon_banner():
+    banner = f"""
+{Colors.CYAN}╔══════════════════════════════════════════════════╗
+║                                                  ║
+║{Colors.RED}         █████╗ ██╗   ██╗████████╗ ██████╗       {Colors.CYAN}║
+║{Colors.RED}        ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗      {Colors.CYAN}║
+║{Colors.RED}        ███████║██║   ██║   ██║   ██║   ██║      {Colors.CYAN}║
+║{Colors.RED}        ██╔══██║██║   ██║   ██║   ██║   ██║      {Colors.CYAN}║
+║{Colors.RED}        ██║  ██║╚██████╔╝   ██║   ╚██████╔╝      {Colors.CYAN}║
+║{Colors.RED}        ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝       {Colors.CYAN}║
+║                                                  ║
+║{Colors.BLUE}        ██████╗ ███████╗ ██████╗ ██████╗ ███╗   ██╗{Colors.CYAN}║
+║{Colors.BLUE}        ██╔══██╗██╔════╝██╔════╝██╔═══██╗████╗  ██║{Colors.CYAN}║
+║{Colors.BLUE}        ██████╔╝█████╗  ██║     ██║   ██║██╔██╗ ██║{Colors.CYAN}║
+║{Colors.BLUE}        ██╔══██╗██╔══╝  ██║     ██║   ██║██║╚██╗██║{Colors.CYAN}║
+║{Colors.BLUE}        ██║  ██║███████╗╚██████╗╚██████╔╝██║ ╚████║{Colors.CYAN}║
+║{Colors.BLUE}        ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝{Colors.CYAN}║
+║                                                  ║
+╚══════════════════════════════════════════════════╝{Colors.END}"""
+    print(banner)
+
+def display_tool_info():
+    info = f"""
+{Colors.YELLOW}[*] AutoRecon - Automated Reconnaissance Framework
+[*] Version: 1.0
+[*] Authors: Hadeel • Themar • Danah
+[*] Features: WAF Detection, SSL Scan, Subdomains, WhatWeb, Nmap, Katana, Wayback URLs
+{Colors.END}
+"""
+    print(info)
+
+# ---------------- UTILITY FUNCTION ----------------
+
+def run(cmd):
+    try:
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            capture_output=True,
+            text=True
+        )
+        return result.stdout.strip()
+    except Exception:
+        return ""
+
+# ---------------- HELP MENU ----------------
+
+def help_menu():
+    print("""
+Usage:
+    autorecon <target>
+
+Example:
+    autorecon https://testphp.vulnweb.com
+
+Description:
+    Performs automated recon including:
+    • WAF detection
+    • SSL date scan
+    • Subdomain enumeration
+    • Technology detection
+    • Service scan (nmap -sV)
+    • Katana crawling
+    • Wayback archive URLs
+""")
+    sys.exit()
+
+# ---------------- RECON FUNCTIONS ----------------
+
+def waf_scan(target):
+    return run(f"wafw00f {target}")
+
+def ssl_certificate(domain):
+    return run(f"echo | openssl s_client -connect {domain}:443 2>/dev/null | openssl x509 -noout -dates")
+
+def subdomains(domain):
+    return run(f"subfinder -d {domain}")
+
+def tech_scan(target):
+    return run(f"whatweb --color=never {target}")
+
+def service_scan(domain):
+    return run(f"nmap -sV -T4 {domain}")
+
+def katana_urls(target):
+    return run(f"katana -u {target}")
+
+def wayback_urls(domain):
+    return run(f"waybackurls {domain}")
+
+# ---------------- MAIN ----------------
+
+def main():
+    if len(sys.argv) == 2 and sys.argv[1] in ["-h", "--help"]:
+        help_menu()
+
+    if len(sys.argv) != 2:
+        print("Usage: autorecon <target>")
+        sys.exit(1)
+
+    target = sys.argv[1]
+    domain = target.replace("http://", "").replace("https://", "").split("/")[0]
+
+    # Banner
+    colored_auto_recon_banner()
+    display_tool_info()
+    print(f"{Colors.GREEN}[+] Starting Recon on: {domain} {Colors.END}\n")
+
+    # Recon tasks
+    waf = waf_scan(target)
+    ssl = ssl_certificate(domain)
+    subs = subdomains(domain)
+    tech = tech_scan(target)
+    services = service_scan(domain)
+    katana_out = katana_urls(target)
+    wayback_out = wayback_urls(domain)
+
+    # Summary
+    summary = []
+    summary.append("=============== FINAL RECON SUMMARY ===============\n")
+
+    summary.append("\n[1] WAF Detection:\n")
+    summary.append(waf or "No WAF detected")
+
+    summary.append("\n\n[2] SSL Certificate Expiry:\n")
+    summary.append(ssl or "No SSL data")
+    summary.append("\n\n[3] Subdomains:\n")
+    summary.append(subs or "No subdomains found")
+
+    summary.append("\n\n[4] Technologies (WhatWeb):\n")
+    summary.append(tech or "No tech identified")
+
+    summary.append("\n\n[5] Services (Nmap -sV):\n")
+    summary.append(services or "No services detected")
+
+    summary.append("\n\n[6] Katana URLs:\n")
+    summary.append(katana_out or "No Katana URLs")
+
+    summary.append("\n\n[7] Wayback Machine URLs:\n")
+    summary.append(wayback_out or "No Wayback URLs")
+
+    summary.append("\n====================================================")
+    summary.append("\nRecon Completed Successfully!\n")
+
+    out_file = f"{domain}_recon_summary.txt"
+    with open(out_file, "w") as f:
+        f.write("\n".join(summary))
+
+    print(f"{Colors.GREEN}[+] Report saved to: {out_file}{Colors.END}\n")
+
+# ---------------- RUN MAIN ----------------
+
+if __name__ == "__main__":
+    main() 
